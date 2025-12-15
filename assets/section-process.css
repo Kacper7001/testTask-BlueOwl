@@ -37,9 +37,9 @@
   border-bottom: 1px solid rgba(34, 36, 44, 0.8);
   cursor: pointer;
 
+  font-family: 'Inter';
   font-size: 20px;
   font-weight: 500;
-  font-family: 'Inter';
   letter-spacing: -0.022em;
   color: #22242C;
 
@@ -73,8 +73,8 @@
 
 .process-tab-panel.is-init {
   opacity: 1;
-  transform: none;
   visibility: visible;
+  transform: none;
 }
 
 [data-animation="fade"] .process-tab-panel {
@@ -105,10 +105,8 @@
   padding: 48px 0;
   counter-reset: process-step;
 }
-
 .process-step {
   display: flex;
-  gap: 16px;
 }
 
 .process-step-icon {
@@ -125,6 +123,7 @@
 .process-step-content {
   display: flex;
   flex-direction: column;
+  order: 2;
   gap: 8px;
 }
 
@@ -135,28 +134,13 @@
   font-weight: 500;
 }
 
-.process-step-title ol {
-  margin: 0;
-  padding: 0;
-}
-
-.process-step-title ol li {
-  counter-increment: process-step;
-}
-
-.process-step-title ol li::marker {
-  content: counter(process-step) ". ";
-  font-weight: 500;
-}
-
 .process-step-text {
   font-size: 14px;
   line-height: 16px;
   font-weight: 300;
-  color: #22242C;
   letter-spacing: -0.01em;
+  color: #22242C;
 }
-
 
 .process-footer {
   text-align: center;
@@ -193,4 +177,17 @@
   .process-steps {
     max-width: unset;
   }
+}
+
+.process-step-wrapper {
+  counter-increment: process-step;
+}
+
+.process-step::before {
+  content: counter(process-step) ".";
+  font-size: 16px;
+  line-height: 18px;
+  font-weight: 500;
+  min-width: 18px;
+  order: 1;
 }
