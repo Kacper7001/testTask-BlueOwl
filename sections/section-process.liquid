@@ -55,21 +55,26 @@
                   {% assign body = block.settings.step_4_body %}
                   {% assign icon = block.settings.step_4_icon %}
               {% endcase %}
+
               {% if title != blank %}
-                <div class="process-step">
-                  {% if icon != blank %}
-                    <div class="process-step-icon">
-                      <img src="{{ icon | image_url: width: 24 }}" alt="">
+                <div class="process-step-wrapper">
+                  <div class="process-step">
+                    {% if icon != blank %}
+                      <div class="process-step-icon">
+                        <img src="{{ icon | image_url: width: 24 }}" alt="{{ title }}">
+                      </div>
+                    {% endif %}
+
+                    <div class="process-step-content">
+                      <div class="process-step-title">{{ title }}</div>
+                      <div class="process-step-text">{{ body }}</div>
                     </div>
-                  {% endif %}
-                  <div class="process-step-content">
-                    <div class="process-step-title"><ol style="padding: 0; margin: 0"><li>{{ title }}</li></ol></div>
-                    <div class="process-step-text">{{ body }}</div>
                   </div>
                 </div>
               {% endif %}
             {% endfor %}
           </div>
+
         </div>
       {% endfor %}
     </div>

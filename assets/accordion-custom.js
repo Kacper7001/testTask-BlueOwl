@@ -1,4 +1,7 @@
 import { mediaQueryLarge, isMobileBreakpoint } from '@theme/utilities';
+import { createRequire } from 'module';
+
+const require = createRequire(import.meta.url);
 
 // Accordion
 class AccordionCustom extends HTMLElement {
