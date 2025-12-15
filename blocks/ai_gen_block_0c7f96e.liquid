@@ -1,0 +1,966 @@
+{% doc %}
+  @prompt
+    Napisz sekcje, która będzie "Ready fit" rzeczy które do siebie pasują - ubran, akcesorii
+    Dodaj wiele fajnych ustawien
+
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-ready-fit-{{ ai_gen_id }} {
+    padding: {{ block.settings.section_padding }}px 20px;
+    background-color: {{ block.settings.background_color }};
+  }
+
+  .ai-ready-fit-container-{{ ai_gen_id }} {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .ai-ready-fit-header-{{ ai_gen_id }} {
+    text-align: {{ block.settings.text_alignment }};
+    margin-bottom: {{ block.settings.header_spacing }}px;
+  }
+
+  .ai-ready-fit-title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.title_size }}px;
+    color: {{ block.settings.title_color }};
+    margin: 0 0 {{ block.settings.title_margin }}px 0;
+    font-weight: {{ block.settings.title_weight }};
+  }
+
+  .ai-ready-fit-description-{{ ai_gen_id }} {
+    font-size: {{ block.settings.description_size }}px;
+    color: {{ block.settings.description_color }};
+    margin: 0;
+    max-width: 600px;
+    {% if block.settings.text_alignment == 'center' %}
+      margin-left: auto;
+      margin-right: auto;
+    {% endif %}
+  }
+
+  .ai-ready-fit-grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: {{ block.settings.grid_gap }}px;
+    margin-top: {{ block.settings.content_spacing }}px;
+  }
+
+  .ai-ready-fit-set-{{ ai_gen_id }} {
+    background-color: {{ block.settings.card_background }};
+    border-radius: {{ block.settings.card_border_radius }}px;
+    padding: {{ block.settings.card_padding }}px;
+    border: {{ block.settings.card_border_width }}px solid {{ block.settings.card_border_color }};box-shadow: {{ block.settings.card_shadow_blur }}px {{ block.settings.card_shadow_blur }}px {{ block.settings.card_shadow_spread }}px {{ block.settings.card_shadow_color }};
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .ai-ready-fit-set-{{ ai_gen_id }}:hover {
+    transform: translateY(-{{ block.settings.hover_lift }}px);
+    box-shadow: {{ block.settings.card_shadow_blur | times: 1.5 }}px {{ block.settings.card_shadow_blur | times: 1.5 }}px {{ block.settings.card_shadow_spread | times: 2 }}px {{ block.settings.card_shadow_color }};
+  }
+
+  .ai-ready-fit-set-title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.set_title_size }}px;
+    color: {{ block.settings.set_title_color }};
+    margin: 0 0 {{ block.settings.set_title_margin }}px 0;
+    font-weight: {{ block.settings.set_title_weight }};
+  }
+
+  .ai-ready-fit-products-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat({{ block.settings.products_per_row }}, 1fr);
+    gap: {{ block.settings.product_gap }}px;
+    margin-bottom: {{ block.settings.products_margin }}px;
+  }
+
+  .ai-ready-fit-product-{{ ai_gen_id }} {
+    text-align: center;
+  }
+
+  .ai-ready-fit-product-image-{{ ai_gen_id }} {
+    width: 100%;
+    aspect-ratio: {{ block.settings.image_aspect_ratio }};
+    border-radius: {{ block.settings.product_image_radius }}px;
+    overflow: hidden;
+    margin-bottom: 8px;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-ready-fit-product-image-{{ ai_gen_id }} img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-ready-fit-product-image-{{ ai_gen_id }} svg {
+    width: 60%;
+    height: 60%;
+    opacity: 0.3;
+  }
+
+  .ai-ready-fit-product-title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.product_title_size }}px;
+    color: {{ block.settings.product_title_color }};
+    margin: 0 0 4px 0;
+    font-weight: {{ block.settings.product_title_weight }};
+  }
+
+  .ai-ready-fit-product-price-{{ ai_gen_id }} {
+    font-size: {{ block.settings.product_price_size }}px;
+    color: {{ block.settings.product_price_color }};
+    margin: 0;
+    font-weight: {{ block.settings.product_price_weight }};
+  }
+
+  .ai-ready-fit-total-section-{{ ai_gen_id }} {
+    border-top: {{ block.settings.total_border_width }}px solid {{ block.settings.total_border_color }};
+    padding-top: {{ block.settings.total_padding }}px;
+    margin-top: {{ block.settings.total_margin }}px;
+  }
+
+  .ai-ready-fit-total-row-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .ai-ready-fit-total-label-{{ ai_gen_id }} {
+    font-size: {{ block.settings.total_label_size }}px;
+    color: {{ block.settings.total_label_color }};
+    font-weight: {{ block.settings.total_label_weight }};
+  }
+
+  .ai-ready-fit-total-price-{{ ai_gen_id }} {
+    font-size: {{ block.settings.total_price_size }}px;
+    color: {{ block.settings.total_price_color }};
+    font-weight: {{ block.settings.total_price_weight }};
+  }
+
+  .ai-ready-fit-discount-{{ ai_gen_id }} {
+    color: {{ block.settings.discount_color }};
+  }
+
+  .ai-ready-fit-final-total-{{ ai_gen_id }} {
+    font-size: {{ block.settings.final_total_size }}px;
+    color: {{ block.settings.final_total_color }};
+    font-weight: {{ block.settings.final_total_weight }};
+    border-top: 1px solid {{ block.settings.total_border_color }};
+    padding-top: 8px;
+    margin-top: 8px;
+  }
+
+  .ai-ready-fit-button-{{ ai_gen_id }} {
+    width: 100%;
+    padding: {{ block.settings.button_padding }}px;
+    background-color: {{ block.settings.button_background }};
+    color: {{ block.settings.button_text_color }};
+    border: {{ block.settings.button_border_width }}px solid {{ block.settings.button_border_color }};
+    border-radius: {{ block.settings.button_border_radius }}px;
+    font-size: {{ block.settings.button_font_size }}px;
+    font-weight: {{ block.settings.button_font_weight }};
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    margin-top: {{ block.settings.button_margin }}px;
+  }
+
+  .ai-ready-fit-button-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_background }};
+    color: {{ block.settings.button_hover_text }};
+    border-color: {{ block.settings.button_hover_border }};
+  }
+
+  .ai-ready-fit-savings-badge-{{ ai_gen_id }} {
+    background-color: {{ block.settings.savings_badge_background }};
+    color: {{ block.settings.savings_badge_text }};
+    padding: 4px 8px;
+    border-radius: {{ block.settings.savings_badge_radius }}px;
+    font-size: {{ block.settings.savings_badge_size }}px;
+    font-weight: {{ block.settings.savings_badge_weight }};display: inline-block;
+    margin-bottom: 8px;
+  }
+
+  @media screen and (max-width: 768px) {
+    .ai-ready-fit-grid-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+    }
+
+    .ai-ready-fit-products-{{ ai_gen_id }} {
+      grid-template-columns: repeat({{ block.settings.products_per_row_mobile }}, 1fr);
+    }
+
+    .ai-ready-fit-title-{{ ai_gen_id }} {
+      font-size: {{ block.settings.title_size | times: 0.8 }}px;
+    }
+
+    .ai-ready-fit-set-{{ ai_gen_id }} {
+      padding: {{ block.settings.card_padding | times: 0.8 }}px;
+    }
+  }
+{% endstyle %}
+
+<div class="ai-ready-fit-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-ready-fit-container-{{ ai_gen_id }}">
+    {% if block.settings.title != blank or block.settings.description != blank %}
+      <div class="ai-ready-fit-header-{{ ai_gen_id }}">
+        {% if block.settings.title != blank %}
+          <h2 class="ai-ready-fit-title-{{ ai_gen_id }}">{{ block.settings.title }}</h2>
+        {% endif %}
+        {% if block.settings.description != blank %}
+          <div class="ai-ready-fit-description-{{ ai_gen_id }}">{{ block.settings.description }}</div>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <div class="ai-ready-fit-grid-{{ ai_gen_id }}">
+      {% for i in (1..3) %}
+        {% liquid
+          assign set_title_key = 'set_' | append: i | append: '_title'
+          assign product_1_key = 'set_' | append: i | append: '_product_1'
+          assign product_2_key = 'set_' | append: i | append: '_product_2'
+          assign product_3_key = 'set_' | append: i | append: '_product_3'
+          assign product_4_key = 'set_' | append: i | append: '_product_4'
+
+          assign set_title = block.settings[set_title_key]
+          assign product_1 = block.settings[product_1_key]
+          assign product_2 = block.settings[product_2_key]
+          assign product_3 = block.settings[product_3_key]
+          assign product_4 = block.settings[product_4_key]
+
+          assign has_products = false
+          if product_1 != blank or product_2 != blank or product_3 != blank or product_4 != blank
+            assign has_products = true
+          endif
+        %}
+
+        {% if has_products or set_title != blank %}
+          <div class="ai-ready-fit-set-{{ ai_gen_id }}">
+            {% if set_title != blank %}
+              <h3 class="ai-ready-fit-set-title-{{ ai_gen_id }}">{{ set_title }}</h3>
+            {% endif %}<div class="ai-ready-fit-products-{{ ai_gen_id }}">
+              {% assign products = product_1 | append: ',' | append: product_2 | append: ',' | append: product_3 | append: ',' | append: product_4 | split: ',' %}
+              {% assign total_price = 0 %}
+              
+              {% for product_handle in products %}
+                {% if product_handle != blank %}
+                  {% case forloop.index %}
+                    {% when 1 %}
+                      {% assign current_product = product_1 %}
+                    {% when 2 %}
+                      {% assign current_product = product_2 %}
+                    {% when 3 %}
+                      {% assign current_product = product_3 %}
+                    {% when 4 %}
+                      {% assign current_product = product_4 %}
+                  {% endcase %}
+
+                  {% if current_product != blank %}
+                    {% assign total_price = total_price | plus: current_product.price %}<div class="ai-ready-fit-product-{{ ai_gen_id }}">
+                      <div class="ai-ready-fit-product-image-{{ ai_gen_id }}">
+                        {% if current_product.featured_image %}
+                          <img
+                            src="{{ current_product.featured_image | image_url: width: 300}}"
+                            alt="{{ current_product.featured_image.alt | escape }}"
+                            loading="lazy"
+                            width="300"
+                            height="300"
+                          >
+                        {% else %}
+                          {{ 'product-apparel-1' | placeholder_svg_tag }}
+                        {% endif %}
+                      </div>
+                      <h4 class="ai-ready-fit-product-title-{{ ai_gen_id }}">{{ current_product.title }}</h4>
+                      <div class="ai-ready-fit-product-price-{{ ai_gen_id }}">{{ current_product.price | money }}</div>
+                    </div>
+                  {% endif %}
+                {% endif %}
+              {% endfor %}
+            </div>
+
+            {% if total_price > 0 %}
+              <div class="ai-ready-fit-total-section-{{ ai_gen_id }}">
+                {% if block.settings.show_savings_badge and block.settings.discount_percentage > 0 %}
+                  <div class="ai-ready-fit-savings-badge-{{ ai_gen_id }}">Oszczędzasz {{ block.settings.discount_percentage }}%!
+                  </div>
+                {% endif %}
+
+                <div class="ai-ready-fit-total-row-{{ ai_gen_id }}">
+                  <span class="ai-ready-fit-total-label-{{ ai_gen_id }}">Cena regularna:</span>
+                  <span class="ai-ready-fit-total-price-{{ ai_gen_id }}">{{ total_price | money }}</span>
+                </div>
+
+                {% if block.settings.discount_percentage > 0 %}
+                  {% assign discount_amount = total_price | times: block.settings.discount_percentage | divided_by: 100 %}
+                  {% assign discounted_total = total_price | minus: discount_amount %}
+                  <div class="ai-ready-fit-total-row-{{ ai_gen_id }}">
+                    <span class="ai-ready-fit-total-label-{{ ai_gen_id }}">Zniżka ({{ block.settings.discount_percentage }}%):</span>
+                    <span class="ai-ready-fit-total-price-{{ ai_gen_id }} ai-ready-fit-discount-{{ ai_gen_id }}">-{{ discount_amount | money }}</span>
+                  </div>
+
+                  <div class="ai-ready-fit-total-row-{{ ai_gen_id }} ai-ready-fit-final-total-{{ ai_gen_id }}">
+                    <span class="ai-ready-fit-total-label-{{ ai_gen_id }}">Cena zestawu:</span>
+                    <span class="ai-ready-fit-total-price-{{ ai_gen_id }}">{{ discounted_total | money }}</span>
+                  </div>
+                {% else %}
+                  <div class="ai-ready-fit-total-row-{{ ai_gen_id }} ai-ready-fit-final-total-{{ ai_gen_id }}">
+                    <span class="ai-ready-fit-total-label-{{ ai_gen_id }}">Cena zestawu:</span>
+                    <span class="ai-ready-fit-total-price-{{ ai_gen_id }}">{{ total_price | money }}</span>
+                  </div>
+                {% endif %}
+
+                {% if block.settings.button_text != blank %}
+                  <a href="{{ block.settings.button_link }}" class="ai-ready-fit-button-{{ ai_gen_id }}">
+                    {{ block.settings.button_text }}
+                  </a>
+                {% endif %}
+              </div>
+            {% endif %}
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Ready Fit - Zestawy",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Treść"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Tytuł",
+      "default": "Ready Fit - Zestawy"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Opis",
+      "default": "<p>Odkryj nasze starannie dobrane zestawy ubrań i akcesoriów, które idealnie do siebie pasują.</p>"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Tekst przycisku",
+      "default": "Dodaj zestaw do koszyka"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Link przycisku"
+    },
+    {
+      "type": "header",
+      "content": "Zniżka na zestaw"
+    },
+    {
+      "type": "range",
+      "id": "discount_percentage",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "%",
+      "label": "Procent zniżki",
+      "default": 10
+    },
+    {
+      "type": "checkbox",
+      "id": "show_savings_badge",
+      "label": "Pokaż znaczek oszczędności",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Zestaw 1"
+    },
+    {
+      "type": "text",
+      "id": "set_1_title",
+      "label": "Nazwa zestawu",
+      "default": "Elegancki Look"
+    },
+    {
+      "type": "product",
+      "id": "set_1_product_1",
+      "label": "Produkt 1"
+    },
+    {
+      "type": "product",
+      "id": "set_1_product_2",
+      "label": "Produkt 2"
+    },
+    {
+      "type": "product",
+      "id": "set_1_product_3",
+      "label": "Produkt 3"
+    },
+    {
+      "type": "product",
+      "id": "set_1_product_4",
+      "label": "Produkt 4"
+    },
+    {
+      "type": "header",
+      "content": "Zestaw 2"
+    },
+    {
+      "type": "text",
+      "id": "set_2_title",
+      "label": "Nazwa zestawu",
+      "default": "Casual Style"
+    },
+    {
+      "type": "product",
+      "id": "set_2_product_1",
+      "label": "Produkt 1"
+    },
+    {
+      "type": "product",
+      "id": "set_2_product_2",
+      "label": "Produkt 2"
+    },
+    {
+      "type": "product",
+      "id": "set_2_product_3",
+      "label": "Produkt 3"
+    },
+    {
+      "type": "product",
+      "id": "set_2_product_4",
+      "label": "Produkt 4"
+    },
+    {
+      "type": "header",
+      "content": "Zestaw 3"
+    },
+    {
+      "type": "text",
+      "id": "set_3_title",
+      "label": "Nazwa zestawu",
+      "default": "Sportowy Outfit"
+    },
+    {
+      "type": "product",
+      "id": "set_3_product_1",
+      "label": "Produkt 1"
+    },
+    {
+      "type": "product",
+      "id": "set_3_product_2",
+      "label": "Produkt 2"
+    },
+    {
+      "type": "product",
+      "id": "set_3_product_3",
+      "label": "Produkt 3"
+    },
+    {
+      "type": "product",
+      "id": "set_3_product_4",
+      "label": "Produkt 4"
+    },
+    {
+      "type": "header",
+      "content": "Układ"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Wyrównanie tekstu",
+      "options": [
+        {
+          "value": "left",
+          "label": "Do lewej"
+        },
+        {
+          "value": "center",
+          "label": "Do środka"
+        },
+        {
+          "value": "right",
+          "label": "Do prawej"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "products_per_row",
+      "label": "Produkty w rzędzie",
+      "options": [
+        {
+          "value": "2",
+          "label": "2"
+        },
+        {
+          "value": "3",
+          "label": "3"
+        },
+        {
+          "value": "4",
+          "label": "4"
+        }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "select",
+      "id": "products_per_row_mobile",
+      "label": "Produkty w rzędzie na mobile",
+      "options": [
+        {
+          "value": "1",
+          "label": "1"
+        },
+        {
+          "value": "2",
+          "label": "2"
+        }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "select",
+      "id": "image_aspect_ratio",
+      "label": "Proporcje obrazu",
+      "options": [
+        {
+          "value": "1/1",
+          "label": "Kwadrat (1:1)"
+        },
+        {
+          "value": "3/4",
+          "label": "Portret (3:4)"
+        },
+        {
+          "value": "4/3",
+          "label": "Krajobraz (4:3)"
+        }
+      ],
+      "default": "1/1"
+    },
+    {
+      "type": "header",
+      "content": "Odstępy"
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Padding sekcji",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "header_spacing",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "label": "Odstęp pod nagłówkiem",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "content_spacing",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "label": "Odstęp przed treścią",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "label": "Odstęp między zestawami",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "product_gap",
+      "min": 5,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "label": "Odstęp między produktami",
+      "default": 15
+    },
+    {
+      "type": "header",
+      "content": "Kolory"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Tło sekcji",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Kolor tytułu",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "description_color",
+      "label": "Kolor opisu",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Tło karty",
+      "default": "#f8f8f8"
+    },
+    {
+      "type": "color",
+      "id": "card_border_color",
+      "label": "Kolor ramki karty",
+      "default": "#e0e0e0"
+    },
+    {
+      "type": "color",
+      "id": "card_shadow_color",
+      "label": "Kolor cienia karty",
+      "default": "#00000010"
+    },
+    {
+      "type": "color",
+      "id": "set_title_color",
+      "label": "Kolor tytułu zestawu",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "product_title_color",
+      "label": "Kolor nazwy produktu",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "product_price_color",
+      "label": "Kolor ceny produktu",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "total_border_color",
+      "label": "Kolor ramki podsumowania",
+      "default": "#e0e0e0"
+    },
+    {
+      "type": "color",
+      "id": "total_label_color",
+      "label": "Kolor etykiet podsumowania",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "total_price_color",
+      "label": "Kolor cen podsumowania",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "discount_color",
+      "label": "Kolor zniżki",
+      "default": "#e74c3c"
+    },
+    {
+      "type": "color",
+      "id": "final_total_color",
+      "label": "Kolor ceny końcowej",
+      "default": "#27ae60"
+    },
+    {
+      "type": "color",
+      "id": "savings_badge_background",
+      "label": "Tło znaczka oszczędności",
+      "default": "#e74c3c"
+    },
+    {
+      "type": "color",
+      "id": "savings_badge_text",
+      "label": "Tekst znaczka oszczędności",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Przycisk"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Tło przycisku",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Kolor tekstu przycisku",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_border_color",
+      "label": "Kolor ramki przycisku",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_background",
+      "label": "Tło przycisku po najechaniu",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_text",
+      "label": "Tekst przycisku po najechaniu",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_border",
+      "label": "Ramka przycisku po najechaniu",
+      "default": "#333333"
+    },
+    {
+      "type": "header",
+      "content": "Typografia"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "min": 16,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Rozmiar tytułu",
+      "default": 32
+    },
+    {
+      "type": "select",
+      "id": "title_weight",
+      "label": "Grubość tytułu",
+      "options": [
+        {
+          "value": "300",
+          "label": "Lekka"
+        },
+        {
+          "value": "400",
+          "label": "Normalna"
+        },
+        {
+          "value": "600",
+          "label": "Pogrubiona"
+        },
+        {
+          "value": "700",
+          "label": "Bardzo pogrubiona"
+        }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "range",
+      "id": "description_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Rozmiar opisu",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "set_title_size",
+      "min": 14,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "label": "Rozmiar tytułu zestawu",
+      "default": 20
+    },
+    {
+      "type": "select",
+      "id": "set_title_weight",
+      "label": "Grubość tytułu zestawu",
+      "options": [
+        {
+          "value": "400",
+          "label": "Normalna"
+        },
+        {
+          "value": "500",
+          "label": "Średnia"
+        },
+        {
+          "value": "600",
+          "label": "Pogrubiona"
+        }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "range",
+      "id": "product_title_size",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Rozmiar nazwy produktu",
+      "default": 14
+    },
+    {
+      "type": "select",
+      "id": "product_title_weight",
+      "label": "Grubość nazwy produktu",
+      "options": [
+        {
+          "value": "400",
+          "label": "Normalna"
+        },
+        {
+          "value": "500",
+          "label": "Średnia"
+        },
+        {
+          "value": "600",
+          "label": "Pogrubiona"
+        }
+      ],
+      "default": "500"
+    },
+    {
+      "type": "range",
+      "id": "product_price_size",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Rozmiar ceny produktu",
+      "default": 12
+    },
+    {
+      "type": "select",
+      "id": "product_price_weight",
+      "label": "Grubość ceny produktu",
+      "options": [
+        {
+          "value": "400",
+          "label": "Normalna"
+        },
+        {
+          "value": "500",
+          "label": "Średnia"
+        },
+        {
+          "value": "600",
+          "label": "Pogrubiona"
+        }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "header",
+      "content": "Stylizacja kart"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Zaokrąglenie kart",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "min": 10,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding kart",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "card_border_width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "label": "Grubość ramki kart",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "card_shadow_blur",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Rozmycie cienia",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "card_shadow_spread",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "label": "Rozproszenie cienia",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "hover_lift",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "label": "Podniesienie przy hover",
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "product_image_radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Zaokrąglenie zdjęć produktów",
+      "default": 8
+    }
+  ],
+  "presets": [
+    {
+      "name": "Ready Fit - Zestawy"
+    }
+  ]
+}
+{% endschema %}

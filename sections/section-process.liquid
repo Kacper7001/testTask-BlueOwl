@@ -1,0 +1,144 @@
+{{ 'section-process.css' | asset_url | stylesheet_tag }}
+{{ 'section-process.js' | asset_url | script_tag }}
+
+<style>
+#shopify-section-{{ section.id }} {
+  --process-padding-mobile: {{ section.settings.padding_mobile }};
+  --process-padding-desktop: {{ section.settings.padding_desktop }};
+}
+</style>
+
+<section class="process-section">
+  <div class="process-media">
+    {% if section.settings.main_image != blank %}
+      <img src="{{ section.settings.main_image | image_url: width: 1200 }}" alt="">
+    {% endif %}
+  </div>
+
+  <div class="process-content">
+    <header class="process-header">
+      <{{ section.settings.heading_tag }} class="process-title">
+        {{ section.settings.heading }}
+      </{{ section.settings.heading_tag }}>
+    </header>
+
+{% if section.blocks.size > 1 %}
+  <div class="process-tabs-wrapper" data-animation="{{ section.settings.tab_animation }}">
+    <div class="process-tabs">
+      {% for block in section.blocks %}
+        <button class="process-tab {% if forloop.first %}is-active{% endif %}" data-tab="{{ block.id }}">
+          {{ block.settings.tab_title }}
+        </button>
+      {% endfor %}
+    </div>
+
+    <div class="process-tabs-content">
+      {% for block in section.blocks %}
+        <div class="process-tab-panel {% if forloop.first %}is-active{% endif %}" data-tab-content="{{ block.id }}">
+          <div class="process-steps">
+            {% for i in (1..4) %}
+              {% case i %}
+                {% when 1 %}
+                  {% assign title = block.settings.step_1_title %}
+                  {% assign body = block.settings.step_1_body %}
+                  {% assign icon = block.settings.step_1_icon %}
+                {% when 2 %}
+                  {% assign title = block.settings.step_2_title %}
+                  {% assign body = block.settings.step_2_body %}
+                  {% assign icon = block.settings.step_2_icon %}
+                {% when 3 %}
+                  {% assign title = block.settings.step_3_title %}
+                  {% assign body = block.settings.step_3_body %}
+                  {% assign icon = block.settings.step_3_icon %}
+                {% when 4 %}
+                  {% assign title = block.settings.step_4_title %}
+                  {% assign body = block.settings.step_4_body %}
+                  {% assign icon = block.settings.step_4_icon %}
+              {% endcase %}
+              {% if title != blank %}
+                <div class="process-step">
+                  {% if icon != blank %}
+                    <div class="process-step-icon">
+                      <img src="{{ icon | image_url: width: 24 }}" alt="">
+                    </div>
+                  {% endif %}
+                  <div class="process-step-content">
+                    <div class="process-step-title"><ol style="padding: 0; margin: 0"><li>{{ title }}</li></ol></div>
+                    <div class="process-step-text">{{ body }}</div>
+                  </div>
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endif %}
+
+    {% if section.settings.footer_text != blank %}
+      <div class="process-footer">{{ section.settings.footer_text }}</div>
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Process – Tabs",
+  "tag": "section",
+  "class": "section-process",
+  "settings": [
+    { "type": "image_picker", "id": "main_image", "label": "Main image" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "What is the process?" },
+    {
+      "type": "select",
+      "id": "heading_tag",
+      "label": "Heading tag",
+      "default": "h2",
+      "options": [
+        { "value": "h1", "label": "H1" },
+        { "value": "h2", "label": "H2" },
+        { "value": "h3", "label": "H3" }
+      ]
+    },
+    { "type": "richtext", "id": "footer_text", "label": "Footer text" },
+    {
+      "type": "select",
+      "id": "tab_animation",
+      "label": "Tabs animation",
+      "default": "fade",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "fade", "label": "Fade" },
+        { "value": "slide", "label": "Slide up" }
+      ]
+    },
+    { "type": "text", "id": "padding_mobile", "label": "Padding mobile", "default": "32px 24px" },
+    { "type": "text", "id": "padding_desktop", "label": "Padding desktop", "default": "64px 64px" }
+  ],
+  "blocks": [
+    {
+      "type": "tab",
+      "name": "Tab",
+      "settings": [
+        { "type": "text", "id": "tab_title", "label": "Tab title" },
+        { "type": "image_picker", "id": "step_1_icon", "label": "Step 1 icon" },
+        { "type": "text", "id": "step_1_title", "label": "Step 1 title" },
+        { "type": "textarea", "id": "step_1_body", "label": "Step 1 text" },
+        { "type": "image_picker", "id": "step_2_icon", "label": "Step 2 icon" },
+        { "type": "text", "id": "step_2_title", "label": "Step 2 title" },
+        { "type": "textarea", "id": "step_2_body", "label": "Step 2 text" },
+        { "type": "image_picker", "id": "step_3_icon", "label": "Step 3 icon" },
+        { "type": "text", "id": "step_3_title", "label": "Step 3 title" },
+        { "type": "textarea", "id": "step_3_body", "label": "Step 3 text" },
+        { "type": "image_picker", "id": "step_4_icon", "label": "Step 4 icon" },
+        { "type": "text", "id": "step_4_title", "label": "Step 4 title" },
+        { "type": "textarea", "id": "step_4_body", "label": "Step 4 text" }
+      ]
+    }
+  ],
+  "presets": [
+    { "name": "Process Tabs", "blocks": [{ "type": "tab" }] }
+  ]
+}
+{% endschema %}

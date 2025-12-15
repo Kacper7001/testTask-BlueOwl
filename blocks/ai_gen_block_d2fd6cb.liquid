@@ -1,0 +1,343 @@
+{% doc %}
+  @prompt
+    zgodnie z obecnym designem strony stworz mi sekcje oni o nas mówią tak: z opiniami kafelki jakl bloki ktor emoge dodac
+
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-testimonial-block-{{ ai_gen_id }} {
+    background-color: {{ block.settings.background_color }};
+    padding: {{ block.settings.padding }}px;
+    border-radius: {{ block.settings.border_radius }}px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .ai-testimonial-content-{{ ai_gen_id }} {
+    flex-grow: 1;
+    margin-bottom: 20px;
+  }
+
+  .ai-testimonial-quote-{{ ai_gen_id }} {
+    font-size: {{ block.settings.quote_font_size }}px;
+    line-height: 1.5;
+    color: {{ block.settings.text_color }};
+    margin-bottom: 20px;
+    font-style: italic;
+    position: relative;
+  }
+
+  .ai-testimonial-quote-{{ ai_gen_id }}::before {
+    content: '"';
+    font-size: {{ block.settings.quote_font_size | times: 1.5 }}px;
+    color: {{ block.settings.accent_color }};
+    position: absolute;
+    left: -15px;
+    top: -10px;
+    line-height: 1;
+  }
+
+  .ai-testimonial-author-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .ai-testimonial-avatar-{{ ai_gen_id }} {
+    width: {{ block.settings.avatar_size }}px;
+    height: {{ block.settings.avatar_size }}px;
+    border-radius:50%;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .ai-testimonial-avatar-{{ ai_gen_id }} img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-testimonial-avatar-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background-color: {{ block.settings.accent_color }};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: {{ block.settings.avatar_size | divided_by: 2 }}px;
+  }
+
+  .ai-testimonial-author-info-{{ ai_gen_id }} {
+    flex-grow: 1;
+  }
+
+  .ai-testimonial-author-name-{{ ai_gen_id }} {
+    font-size: {{ block.settings.name_font_size }}px;
+    font-weight: 600;
+    color: {{ block.settings.text_color }};
+    margin: 0 0 5px 0;
+  }
+
+  .ai-testimonial-author-title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.title_font_size }}px;
+    color: {{ block.settings.subtitle_color }};
+    margin: 0;
+  }
+
+  .ai-testimonial-rating-{{ ai_gen_id }} {
+    display: flex;
+    gap: 2px;
+    margin-top: 10px;
+  }
+
+  .ai-testimonial-star-{{ ai_gen_id }} {
+    width: 16px;
+    height: 16px;
+    color: {{ block.settings.star_color }};
+  }
+
+  .ai-testimonial-star-empty-{{ ai_gen_id }} {
+    color: {{ block.settings.star_empty_color }};
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-testimonial-block-{{ ai_gen_id }} {
+      padding: {{ block.settings.padding | times: 0.7 }}px;
+    }
+    .ai-testimonial-quote-{{ ai_gen_id }} {
+      font-size: {{ block.settings.quote_font_size | times: 0.9 }}px;
+    }
+    
+    .ai-testimonial-avatar-{{ ai_gen_id }} {
+      width: {{ block.settings.avatar_size | times: 0.8 }}px;
+      height: {{ block.settings.avatar_size | times: 0.8 }}px;
+    }
+  }
+{% endstyle %}<div class="ai-testimonial-block-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-testimonial-content-{{ ai_gen_id }}">
+    {% if block.settings.quote != blank %}
+      <div class="ai-testimonial-quote-{{ ai_gen_id }}">
+        {{ block.settings.quote }}
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="ai-testimonial-author-{{ ai_gen_id }}">
+    <div class="ai-testimonial-avatar-{{ ai_gen_id }}">
+      {% if block.settings.author_image %}
+        <img
+          src="{{ block.settings.author_image | image_url: width: 100}}"
+          alt="{{ block.settings.author_name | escape }}"
+          loading="lazy"
+          width="100"
+          height="100"
+        >
+      {% else %}
+        <div class="ai-testimonial-avatar-placeholder-{{ ai_gen_id }}">
+          {% if block.settings.author_name != blank %}
+            {{ block.settings.author_name | slice: 0, 1 | upcase }}
+          {% else %}
+            ?
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="ai-testimonial-author-info-{{ ai_gen_id }}">
+      {% if block.settings.author_name != blank %}
+        <h3 class="ai-testimonial-author-name-{{ ai_gen_id }}">
+          {{ block.settings.author_name }}
+        </h3>
+      {% endif %}
+
+      {% if block.settings.author_title != blank %}
+        <p class="ai-testimonial-author-title-{{ ai_gen_id }}">
+          {{ block.settings.author_title }}
+        </p>
+      {% endif %}
+
+      {% if block.settings.show_rating %}
+        <div class="ai-testimonial-rating-{{ ai_gen_id }}">
+          {% for i in (1..5) %}
+            <svg
+              class="ai-testimonial-star-{{ ai_gen_id }} {% if i > block.settings.rating %}ai-testimonial-star-empty-{{ ai_gen_id }}{% endif %}"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+            >
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Opinia klienta",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Treść opinii"
+    },
+    {
+      "type": "textarea",
+      "id": "quote",
+      "label": "Opinia"
+    },
+    {
+      "type": "text",
+      "id": "author_name",
+      "label": "Imię i nazwisko",
+      "default": "Jan Kowalski"
+    },
+    {
+      "type": "text",
+      "id": "author_title",
+      "label": "Stanowisko/firma"
+    },
+    {
+      "type": "image_picker",
+      "id": "author_image",
+      "label": "Zdjęcie autora"
+    },
+    {
+      "type": "header",
+      "content": "Ocena"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_rating",
+      "label": "Pokaż ocenę gwiazdkami",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "rating",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "label": "Liczba gwiazdek",
+      "default": 5
+    },
+    {
+      "type": "header",
+      "content": "Kolory"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Kolor tła",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Kolor tekstu",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Kolor podtytułu",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Kolor akcentu",
+      "default": "#000f9f"
+    },
+    {
+      "type": "color",
+      "id": "star_color",
+      "label": "Kolor gwiazdek",
+      "default": "#ffd700"
+    },
+    {
+      "type": "color",
+      "id": "star_empty_color",
+      "label": "Kolor pustych gwiazdek",
+      "default": "#e0e0e0"
+    },
+    {
+      "type": "header",
+      "content": "Rozmiary"
+    },
+    {
+      "type": "range",
+      "id": "padding",
+      "min": 10,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "label": "Odstęp wewnętrzny",
+      "default": 25
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Zaokrąglenie rogów",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "avatar_size",
+      "min": 40,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "label": "Rozmiar awatara",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "quote_font_size",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Rozmiar czcionki opinii",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "name_font_size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Rozmiar czcionki imienia",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "title_font_size",
+      "min": 10,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "label": "Rozmiar czcionki stanowiska",
+      "default": 14
+    }
+  ],
+  "presets": [
+    {
+      "name": "Opinia klienta"
+    }
+  ],
+  "tag": null
+}
+{% endschema %}
